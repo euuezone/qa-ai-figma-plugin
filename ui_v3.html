@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #F5F5F8;
+      --s1:      #FFFFFF;
+      --s2:      #EFEFF2;
+      --bd:      #DDDDE6;
+      --bd-sub:  #E8E8EF;
+      --t1:      #0C0C0F;
+      --t2:      #68687A;
+      --t3:      #A8A8BC;
+      --acc:     #3264D0;
+      --acc-dim: rgba(50,100,208,.07);
+      --acc-bd:  rgba(50,100,208,.20);
+      --acc-t:   #1E4BAA;
+      --ok:      #18A348;
+      --err:     #D43636;
+      --r:       3px;
+      --fnt:     'Geist','SF Pro Text',-apple-system,system-ui,sans-serif;
+      --fnt-m:   'Geist Mono','SF Mono','Menlo','Consolas',monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--fnt);
+      font-size: 11px;
+      color: var(--t1);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    .hd {
+      height: 32px;
+      background: var(--s1);
+      border-bottom: 1px solid var(--bd);
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 5px;
+      flex-shrink: 0;
+      animation: fadeDown .32s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 5px;
+      flex: 1; min-width: 0;
+    }
+    .logo-icon { color: var(--acc-t); flex-shrink: 0; }
+    .logo-title { font-size: 11px; font-weight: 600; letter-spacing: -.01em; }
+    .logo-badge {
+      font-family: var(--fnt-m);
+      font-size: 9px; color: var(--t3);
+      background: var(--s2); border: 1px solid var(--bd);
+      border-radius: 2px; padding: 1px 5px; letter-spacing: .04em;
+    }
+
+    .ch-select {
+      height: 22px;
+      appearance: none; -webkit-appearance: none;
+      background-color: var(--bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%23A8A8BC' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 5px center;
+      border: 1px solid var(--bd); border-radius: var(--r);
+      color: var(--t2); font-size: 10px;
+      font-family: var(--fnt); font-weight: 500;
+      padding: 0 20px 0 7px; cursor: pointer; outline: none;
+      transition: border-color .18s ease, color .18s ease;
+    }
+    .ch-select:hover { border-color: var(--t3); color: var(--t1); }
+    .ch-select:focus { border-color: var(--acc); }
+    .ch-select option { background: #FFFFFF; }
+
+    .btn-figma {
+      height: 22px; padding: 0 8px;
+      background: var(--bg); border: 1px solid var(--bd); border-radius: var(--r);
+      color: var(--t2); font-size: 10px; font-family: var(--fnt); font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; gap: 4px;
+      white-space: nowrap; flex-shrink: 0;
+      transition: all .2s cubic-bezier(.16,1,.3,1);
+    }
+    .btn-figma:hover { border-color: var(--t3); color: var(--t1); }
+    .btn-figma.active { background: var(--acc-dim); border-color: var(--acc-bd); color: var(--acc-t); }
+    .btn-figma:active:not(:disabled) { transform: translateY(1px) scale(.98); }
+    .btn-figma:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── API ROW ─────────────────────────────── */
+    .api-row {
+      height: 28px;
+      background: var(--bg); border-bottom: 1px solid var(--bd);
+      display: flex; align-items: center; padding: 0 8px;
+      flex-shrink: 0;
+      animation: fadeDown .32s .04s cubic-bezier(.16,1,.3,1) both;
+    }
+    .api-label {
+      font-family: var(--fnt-m); font-size: 9px; color: var(--t3);
+      white-space: nowrap; padding-right: 7px; border-right: 1px solid var(--bd);
+      margin-right: 7px; letter-spacing: .05em; flex-shrink: 0;
+    }
+    .api-input {
+      flex: 1; background: none; border: none; outline: none;
+      font-family: var(--fnt-m); font-size: 10px; color: var(--t1);
+      padding: 0; min-width: 0; letter-spacing: .04em;
+    }
+    .api-input::placeholder { color: var(--t3); }
+
+    /* ── IMAGE BAR ───────────────────────────── */
+    .img-bar {
+      max-height: 0; overflow: hidden;
+      background: var(--s1); border-bottom: 1px solid transparent;
+      display: flex; align-items: center; padding: 0 8px; gap: 7px;
+      flex-shrink: 0;
+      transition: max-height .3s cubic-bezier(.16,1,.3,1),
+                  border-color .3s ease,
+                  padding-top .3s ease, padding-bottom .3s ease;
+    }
+    .img-bar.visible {
+      max-height: 38px; border-bottom-color: var(--bd);
+      padding-top: 7px; padding-bottom: 7px;
+    }
+    .img-thumb {
+      width: 22px; height: 22px; object-fit: cover;
+      border-radius: 2px; border: 1px solid var(--bd); flex-shrink: 0;
+    }
+    .img-name {
+      flex: 1; font-size: 11px; font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .img-count {
+      font-family: var(--fnt-m); font-size: 9px;
+      color: var(--t3); white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-clr {
+      background: none; border: none; color: var(--t3); cursor: pointer;
+      width: 20px; height: 20px; display: flex; align-items: center;
+      justify-content: center; border-radius: 2px; flex-shrink: 0;
+      transition: color .14s ease, background .14s ease;
+    }
+    .btn-clr:hover { color: var(--err); background: rgba(212,54,54,.08); }
+
+    /* ── ACTION BAR ──────────────────────────── */
+    .act-bar {
+      max-height: 0; overflow: hidden;
+      background: var(--s1); border-bottom: 1px solid transparent;
+      display: flex; flex-shrink: 0;
+      transition: max-height .3s .06s cubic-bezier(.16,1,.3,1),
+                  border-color .3s .06s ease;
+    }
+    .act-bar.visible { max-height: 32px; border-bottom-color: var(--bd); }
+
+    .btn-act {
+      flex: 1; height: 32px; background: none; border: none;
+      color: var(--t2); font-family: var(--fnt); font-size: 11px; font-weight: 500;
+      cursor: pointer; letter-spacing: .01em;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      transition: all .2s cubic-bezier(.16,1,.3,1);
+    }
+    .btn-act:hover { background: var(--s2); color: var(--t1); }
+    .btn-act:active:not(:disabled) { transform: scale(.99); }
+    .btn-act:disabled { opacity: .35; cursor: not-allowed; }
+    .btn-review:hover { background: var(--acc-dim); color: var(--acc-t); }
+    .btn-draft:hover  { background: rgba(24,163,72,.07); color: #16874A; }
+    .act-sep { width: 1px; background: var(--bd); flex-shrink: 0; }
+
+    /* ── CHAT AREA ───────────────────────────── */
+    .chat {
+      flex: 1; overflow-y: auto; padding: 8px;
+      display: flex; flex-direction: column; gap: 5px; min-height: 0;
+      scrollbar-width: thin; scrollbar-color: var(--bd) transparent;
+      animation: fadeIn .35s .1s cubic-bezier(.16,1,.3,1) both;
+    }
+    .chat::-webkit-scrollbar { width: 3px; }
+    .chat::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 2px; }
+
+    /* Empty state */
+    .empty {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; color: var(--t3); user-select: none;
+    }
+    .empty svg { opacity: .35; }
+    .empty p { font-size: 11px; color: var(--t2); text-align: center; line-height: 1.75; }
+    .empty strong { color: var(--t1); font-weight: 500; }
+
+    /* Bubble */
+    .bwrap {
+      display: flex; flex-direction: column; gap: 3px;
+      animation: slideUp .28s cubic-bezier(.16,1,.3,1) both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .bubble {
+      padding: 6px 9px; border-radius: var(--r);
+      font-size: 11px; line-height: 1.65; word-break: break-word;
+    }
+    .bubble.user {
+      background: var(--acc-dim); border: 1px solid var(--acc-bd);
+      color: var(--acc-t); align-self: flex-end; max-width: 88%;
+      font-size: 10px; letter-spacing: .01em;
+    }
+    .bubble.asst {
+      background: var(--s1); border: 1px solid var(--bd);
+      color: var(--t1); align-self: flex-start;
+      white-space: pre-wrap; width: 100%;
+    }
+    .bubble.typing {
+      background: var(--s1); border: 1px solid var(--bd);
+      align-self: flex-start; display: flex;
+      align-items: center; padding: 8px 10px; width: 52px;
+    }
+
+    /* Typing dots */
+    .dots { display: flex; gap: 3px; align-items: center; }
+    .dots span {
+      width: 4px; height: 4px; background: var(--acc);
+      border-radius: 50%;
+      animation: pulseDot 1.3s ease-in-out infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: .18s; }
+    .dots span:nth-child(3) { animation-delay: .36s; }
+    @keyframes pulseDot {
+      0%,60%,100% { opacity: .2; transform: scale(.8); }
+      30%          { opacity: 1;  transform: scale(1.25); }
+    }
+
+    /* Bubble action buttons */
+    .bacts { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 1px; }
+    .abtn {
+      background: none; border: 1px solid var(--bd); border-radius: var(--r);
+      padding: 3px 8px; font-size: 10px; font-family: var(--fnt);
+      color: var(--t2); cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      transition: all .14s ease;
+    }
+    .abtn:hover { border-color: var(--t3); color: var(--t1); }
+    .abtn.prim {
+      background: var(--acc-dim); border-color: var(--acc-bd); color: var(--acc-t);
+    }
+    .abtn.prim:hover { background: rgba(50,100,208,.13); }
+
+    /* TSV table */
+    .tsv { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 3px; }
+    .tsv th, .tsv td {
+      border: 1px solid var(--bd); padding: 4px 6px;
+      text-align: left; vertical-align: top; line-height: 1.45;
+    }
+    .tsv th {
+      background: var(--s2); color: var(--t2);
+      font-weight: 600; font-size: 9px;
+      text-transform: uppercase; letter-spacing: .05em; white-space: nowrap;
+    }
+    .tsv td { background: var(--s1); color: var(--t1); }
+    .tsv tr:nth-child(even) td { background: var(--bg); }
+
+    /* ── STATUS BAR ──────────────────────────── */
+    .sb {
+      height: 15px; flex-shrink: 0;
+      display: flex; align-items: center; padding: 0 8px; gap: 5px;
+      font-family: var(--fnt-m); font-size: 9px; color: var(--t3);
+      border-top: 1px solid var(--bd-sub); background: var(--bg);
+      letter-spacing: .03em;
+    }
+    .sb.err   { color: var(--err); }
+    .sb.busy  { color: var(--acc-t); }
+
+    .sb-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--ok); margin-left: auto;
+      animation: pulseDot 2.5s ease-in-out infinite;
+    }
+    .sb-dot.busy { background: var(--acc); animation-duration: .9s; }
+
+    /* ── INPUT ROW ───────────────────────────── */
+    .inp-wrap {
+      background: var(--s1); border-top: 1px solid var(--bd);
+      padding: 6px 8px; flex-shrink: 0;
+      display: flex; gap: 5px; align-items: flex-end;
+      animation: fadeUp .32s .15s cubic-bezier(.16,1,.3,1) both;
+    }
+    .inp {
+      flex: 1; background: var(--bg); border: 1px solid var(--bd); border-radius: var(--r);
+      padding: 6px 8px; font-size: 11px; font-family: var(--fnt);
+      color: var(--t1); resize: none; outline: none;
+      min-height: 28px; max-height: 72px; line-height: 1.5;
+      transition: border-color .15s ease;
+    }
+    .inp::placeholder { color: var(--t3); }
+    .inp:focus { border-color: rgba(50,100,208,.38); }
+
+    .btn-send {
+      width: 28px; height: 28px;
+      background: var(--acc); border: none; border-radius: var(--r);
+      color: #fff; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s cubic-bezier(.16,1,.3,1);
+    }
+    .btn-send:hover  { background: #2855BC; transform: scale(1.05); }
+    .btn-send:active:not(:disabled) { transform: translateY(1px) scale(.96); }
+    .btn-send:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+    /* ── KEYFRAMES ───────────────────────────── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-3px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(3px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hd">
+  <div class="logo">
+    <svg class="logo-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect x="1" y="1" width="5" height="5" rx=".5" stroke="currentColor" stroke-width="1.2"/>
+      <rect x="8" y="1" width="5" height="5" rx=".5" stroke="currentColor" stroke-width="1.2"/>
+      <rect x="1" y="8" width="5" height="5" rx=".5" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M8 10.5H13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M10.5 8V13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <span class="logo-title">QA AI</span>
+    <span class="logo-badge">v2</span>
+  </div>
+  <select id="channelSelect" class="ch-select" onchange="onChannelChange()">
+    <option value="공통">공통</option>
+    <option value="MTS">MTS</option>
+    <option value="HTS">HTS</option>
+    <option value="홈페이지">홈페이지</option>
+    <option value="신한i">신한i</option>
+  </select>
+  <button class="btn-figma" id="btnFigma" onclick="extractFromFigma()">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <rect x="1" y="1" width="8" height="8" rx=".8" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M1 3.5H9" stroke="currentColor" stroke-width="1"/>
+      <path d="M3.5 1V3.5" stroke="currentColor" stroke-width="1"/>
+    </svg>
+    피그마
+  </button>
+</header>
+
+<!-- API KEY ROW -->
+<div class="api-row">
+  <span class="api-label">API KEY</span>
+  <input type="password" id="apiKey" class="api-input" placeholder="sk-..." spellcheck="false" autocomplete="off" />
+</div>
+
+<!-- IMAGE BAR -->
+<div class="img-bar" id="imageBar">
+  <img id="imageThumb" class="img-thumb" src="" alt="" />
+  <span id="imageName" class="img-name">화면</span>
+  <span id="imageCount" class="img-count"></span>
+  <button class="btn-clr" onclick="clearAll()" title="제거">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <path d="M2.5 2.5L7.5 7.5M7.5 2.5L2.5 7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<!-- ACTION BAR -->
+<div class="act-bar" id="actionBar">
+  <button class="btn-act btn-review" id="btnReview" onclick="runReview()">
+    <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+      <circle cx="4.8" cy="4.8" r="3.3" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M7.5 7.5L9.5 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+    검토
+  </button>
+  <div class="act-sep"></div>
+  <button class="btn-act btn-draft" id="btnDraft" onclick="runDraft()">
+    <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+      <rect x="1.5" y="1.5" width="8" height="8" rx=".8" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M3.5 4h4M3.5 5.5h4M3.5 7h2.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+    </svg>
+    초안 작성
+  </button>
+</div>
+
+<!-- CHAT AREA -->
+<div class="chat" id="chatArea">
+  <div class="empty" id="emptyState">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <path d="M4 10V6a2 2 0 012-2h4"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M28 10V6a2 2 0 00-2-2h-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M4 22v4a2 2 0 002 2h4"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M28 22v4a2 2 0 01-2 2h-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 16h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <p>피그마에서 화면을 가져온 후<br/><strong>검토</strong> 또는 <strong>초안 작성</strong>을 시작하세요</p>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="sb" id="statusBar">
+  <span id="statusText"></span>
+  <span class="sb-dot" id="statusDot"></span>
+</div>
+
+<!-- INPUT ROW -->
+<div class="inp-wrap">
+  <textarea id="userInput" class="inp" placeholder="추가 요청사항..." rows="1"
+    onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+  <button class="btn-send" id="btnSend" onclick="sendMessage()">
+    <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+      <path d="M5.5 9.5V1.5M5.5 1.5L2.5 4.5M5.5 1.5L8.5 4.5"
+        stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</div>
+
+<script src="./system_prompts.js"></script>
+<script>
+SYSTEM_PROMPTS["신한i"] = SYSTEM_PROMPTS["공통"];
+
+let loadedImages = [];
+let chatHistory  = [];
+let isLoading    = false;
+let selCh        = '공통';
+
+/* SVG snippets for buttons (no emoji) */
+const IC_COPY  = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="3" y="3" width="6" height="6" rx=".8" stroke="currentColor" stroke-width="1.2"/><path d="M2 7H1.5A.5.5 0 011 6.5V1.5A.5.5 0 011.5 1h5A.5.5 0 017 1.5V2" stroke="currentColor" stroke-width="1.2"/></svg>`;
+const IC_TABLE = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="8" rx=".8" stroke="currentColor" stroke-width="1.2"/><path d="M1 4h8M4 4v5" stroke="currentColor" stroke-width="1"/></svg>`;
+const IC_FIG   = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="8" rx=".8" stroke="currentColor" stroke-width="1.2"/><path d="M1 3.5H9" stroke="currentColor" stroke-width="1"/><path d="M3.5 1V3.5" stroke="currentColor" stroke-width="1"/></svg>`;
+
+function onChannelChange() {
+  selCh = document.getElementById('channelSelect').value;
+}
+
+function getSys() {
+  return SYSTEM_PROMPTS[selCh] || SYSTEM_PROMPTS['공통'];
+}
+
+window.onload = () => {
+  document.getElementById('apiKey').addEventListener('change', () => {
+    const k = document.getElementById('apiKey').value.trim();
+    if (k) parent.postMessage({ pluginMessage: { type: 'save-key', key: k } }, '*');
+  });
+};
+
+function extractFromFigma() {
+  const btn = document.getElementById('btnFigma');
+  btn.disabled = true;
+  btn.innerHTML = `${IC_FIG} 불러오는 중`;
+  parent.postMessage({ pluginMessage: { type: 'extract' } }, '*');
+}
+
+function clearAll() {
+  loadedImages = []; chatHistory = [];
+  document.getElementById('imageBar').classList.remove('visible');
+  document.getElementById('actionBar').classList.remove('visible');
+  const ca = document.getElementById('chatArea');
+  ca.innerHTML = '';
+  const es = document.createElement('div');
+  es.className = 'empty'; es.id = 'emptyState';
+  es.innerHTML = `
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <path d="M4 10V6a2 2 0 012-2h4"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M28 10V6a2 2 0 00-2-2h-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M4 22v4a2 2 0 002 2h4"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M28 22v4a2 2 0 01-2 2h-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 16h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <p>피그마에서 화면을 가져온 후<br/><strong>검토</strong> 또는 <strong>초안 작성</strong>을 시작하세요</p>`;
+  ca.appendChild(es);
+  setStatus('');
+}
+
+function showImageBar(img) {
+  document.getElementById('imageThumb').src = img.dataUrl || `data:image/png;base64,${img.base64}`;
+  document.getElementById('imageName').textContent = img.name || '화면';
+  document.getElementById('imageCount').textContent =
+    loadedImages.length > 1 ? `+${loadedImages.length - 1}` : '';
+  document.getElementById('imageBar').classList.add('visible');
+  document.getElementById('actionBar').classList.add('visible');
+}
+
+async function callAI(stepId, sys, userMsg, imgObj) {
+  addTyping(stepId);
+  const content = [];
+  if (imgObj) {
+    const mime = imgObj.mime || 'image/png';
+    content.push({ type: 'image_url', image_url: { url: `data:${mime};base64,${imgObj.base64}`, detail: 'high' } });
+  }
+  content.push({ type: 'text', text: userMsg });
+  const key = document.getElementById('apiKey').value.trim();
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [{ role: 'system', content: sys }, { role: 'user', content }],
+      temperature: 0.1, max_tokens: 4000
+    })
+  });
+  removeTyping(stepId);
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+  const d = await res.json();
+  return d.choices[0].message.content;
+}
+
+async function runReview() {
+  if (!checkReady()) return;
+  isLoading = true; setDisabled(true); removeEmpty();
+  addBubble('user', `[${selCh}] 검토 시작`);
+  try {
+    const sys = getSys(); const img = loadedImages[0];
+    setStatus('화면 분석 중...', false, true);
+    const result = await callAI('r1', sys,
+      '이 화면 캡처를 TC 작성 규칙 관점에서 검토해주세요.\n\n다음을 확인하세요:\n1. 어떤 TC를 작성해야 하는지 (작성 대상)\n2. 제외 대상 (제외규칙 기준)\n3. 각 항목의 테스트 구분 (UI/조회/처리)\n4. 주의할 용어 (용어사전 기준)\n5. 확인 불가 항목\n\n검토 결과를 항목별로 정리해주세요.',
+      img);
+    addBubble('asst', result, true);
+    chatHistory.push({ role: 'assistant', text: result });
+    setStatus('');
+  } catch(e) { setStatus('오류: ' + e.message, true);
+  } finally { isLoading = false; setDisabled(false); }
+}
+
+async function runDraft() {
+  if (!checkReady()) return;
+  isLoading = true; setDisabled(true); removeEmpty();
+  addBubble('user', `[${selCh}] TC 초안 작성`);
+  try {
+    const sys = getSys(); const img = loadedImages[0];
+    setStatus('1/2 화면 분석 중...', false, true);
+    const step1 = await callAI('d1', sys,
+      '이 화면 캡처를 분석하여 TC 작성 대상과 제외 대상을 선별하고, 각 항목의 테스트 구분(UI/조회/처리)을 결정해주세요.',
+      img);
+    setStatus('2/2 TC 작성 중...', false, true);
+    const step2 = await callAI('d2', sys,
+      `아래 분석 결과를 바탕으로 TC 초안을 작성하세요.\n\n규칙:\n- 출력은 TSV 형식만 (탭 구분)\n- 헤더: 화면구분1\t화면구분2\t테스트 구분\t테스트 시나리오\t예상 결과\n- 작성규칙, 용어사전, 나쁜TC 패턴 준수\n\n분석 결과:\n${step1}`,
+      null);
+    addBubble('asst', step2, true, true);
+    chatHistory.push({ role: 'assistant', text: step2 });
+    setStatus('');
+  } catch(e) { setStatus('오류: ' + e.message, true);
+  } finally { isLoading = false; setDisabled(false); }
+}
+
+async function sendMessage() {
+  if (isLoading) return;
+  const key = document.getElementById('apiKey').value.trim();
+  if (!key) { alert('API 키를 먼저 입력하세요'); return; }
+  const inp = document.getElementById('userInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = ''; inp.style.height = 'auto';
+  isLoading = true; setDisabled(true); removeEmpty();
+  addBubble('user', text);
+  chatHistory.push({ role: 'user', text });
+  try {
+    const sys = getSys();
+    const img = loadedImages.length > 0 ? loadedImages[0] : null;
+    setStatus('처리 중...', false, true);
+    const result = await callAI('m1', sys, text, img);
+    addBubble('asst', result, true);
+    chatHistory.push({ role: 'assistant', text: result });
+    setStatus('');
+  } catch(e) { setStatus('오류: ' + e.message, true);
+  } finally { isLoading = false; setDisabled(false); }
+}
+
+function addBubble(role, text, showActions, isTsv) {
+  const ca = document.getElementById('chatArea');
+  const wrap = document.createElement('div');
+  wrap.className = 'bwrap';
+  const bbl = document.createElement('div');
+  bbl.className = `bubble ${role}`;
+
+  if (isTsv && text.includes('\t')) {
+    const lines = text.split('\n').filter(l => l.trim());
+    const tbl = document.createElement('table');
+    tbl.className = 'tsv';
+    lines.forEach((line, i) => {
+      const cells = line.split('\t');
+      const tr = document.createElement('tr');
+      cells.forEach(cell => {
+        const td = document.createElement(i === 0 ? 'th' : 'td');
+        td.textContent = cell.trim();
+        tr.appendChild(td);
+      });
+      tbl.appendChild(tr);
+    });
+    bbl.appendChild(tbl);
+    bbl.style.padding = '6px';
+  } else {
+    bbl.textContent = text;
+  }
+
+  wrap.appendChild(bbl);
+
+  if (showActions && role === 'asst') {
+    const acts = document.createElement('div');
+    acts.className = 'bacts';
+    acts.dataset.text = text;
+    let btns = `<button class="abtn" onclick="copyText(this)">${IC_COPY} 복사</button>`;
+    if (text.includes('\t')) {
+      btns = `<button class="abtn prim" onclick="copyTsv(this)">${IC_TABLE} Sheets 복사</button>` + btns;
+    }
+    acts.innerHTML = btns;
+    wrap.appendChild(acts);
+  }
+
+  ca.appendChild(wrap);
+  ca.scrollTop = ca.scrollHeight;
+}
+
+function addTyping(id) {
+  const ca = document.getElementById('chatArea');
+  const b = document.createElement('div');
+  b.className = 'bubble typing'; b.id = 'typing_' + id;
+  b.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+  ca.appendChild(b); ca.scrollTop = ca.scrollHeight;
+}
+function removeTyping(id) { const b = document.getElementById('typing_' + id); if (b) b.remove(); }
+
+function copyText(btn) {
+  const text = btn.closest('.bwrap').querySelector('.bacts').dataset.text;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerHTML = `${IC_COPY} 복사됨`;
+    setTimeout(() => { btn.innerHTML = `${IC_COPY} 복사`; }, 1500);
+  });
+}
+function copyTsv(btn) {
+  const text = btn.closest('.bwrap').querySelector('.bacts').dataset.text;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerHTML = `${IC_TABLE} 복사됨`;
+    setTimeout(() => { btn.innerHTML = `${IC_TABLE} Sheets 복사`; }, 1500);
+  });
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 72) + 'px';
+}
+
+function setStatus(msg, isErr, isBusy) {
+  const bar  = document.getElementById('statusBar');
+  const text = document.getElementById('statusText');
+  const dot  = document.getElementById('statusDot');
+  text.textContent = msg || '';
+  bar.className = 'sb' + (isErr ? ' err' : '') + (isBusy ? ' busy' : '');
+  dot.className  = 'sb-dot' + (isBusy ? ' busy' : '');
+}
+
+function setDisabled(v) {
+  ['btnSend','btnReview','btnDraft','btnFigma'].forEach(id => {
+    document.getElementById(id).disabled = v;
+  });
+}
+
+function removeEmpty() {
+  const e = document.getElementById('emptyState'); if (e) e.remove();
+}
+
+function checkReady() {
+  if (!document.getElementById('apiKey').value.trim()) { alert('API 키를 먼저 입력하세요'); return false; }
+  if (!loadedImages.length) { alert('피그마에서 화면을 먼저 가져오세요'); return false; }
+  if (isLoading) return false;
+  return true;
+}
+
+window.onmessage = (event) => {
+  const msg = event.data.pluginMessage;
+  if (!msg) return;
+  const btn = document.getElementById('btnFigma');
+
+  if (msg.type === 'load-key') document.getElementById('apiKey').value = msg.key;
+
+  if (msg.type === 'selection-changed') {
+    if (msg.count > 0) {
+      btn.innerHTML = `${IC_FIG} "${msg.name.slice(0, 8)}"`;
+      btn.classList.add('active');
+    } else {
+      btn.innerHTML = `${IC_FIG} 피그마`;
+      btn.classList.remove('active');
+    }
+  }
+
+  if (msg.type === 'extract-progress') {
+    btn.disabled = true;
+    btn.innerHTML = `${IC_FIG} 불러오는 중`;
+    setStatus(msg.message, false, true);
+  }
+
+  if (msg.type === 'extracted') {
+    btn.disabled = false;
+    btn.innerHTML = `${IC_FIG} 피그마`;
+    btn.classList.remove('active');
+    loadedImages = msg.images.map(img => ({
+      ...img, dataUrl: `data:${img.mime || 'image/png'};base64,${img.base64}`
+    }));
+    chatHistory = [];
+    showImageBar(loadedImages[0]);
+    removeEmpty();
+    addBubble('asst', `화면 ${loadedImages.length}개를 가져왔습니다.\n검토 또는 초안 작성 버튼을 눌러주세요.`, false);
+    setStatus('');
+  }
+
+  if (msg.type === 'extract-error') {
+    btn.disabled = false;
+    btn.innerHTML = `${IC_FIG} 피그마`;
+    btn.classList.remove('active');
+    setStatus(msg.message, true);
+  }
+};
+</script>
+</body>
+</html>

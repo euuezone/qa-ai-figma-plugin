@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QA AI 도우미 - 피그마 플러그인</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f4f2ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .card { background: #fff; border-radius: 16px; padding: 36px 32px; max-width: 460px; width: 100%; box-shadow: 0 8px 40px rgba(100,80,220,0.12); }
+  .logo { font-size: 40px; margin-bottom: 12px; }
+  h1 { font-size: 22px; font-weight: 800; color: #3a2b8f; margin-bottom: 6px; }
+  .sub { font-size: 13px; color: #888; margin-bottom: 28px; line-height: 1.6; }
+  .file-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .file-item { display: flex; align-items: center; gap: 12px; background: #faf9ff; border: 1px solid #e8e4ff; border-radius: 10px; padding: 12px 14px; text-decoration: none; color: inherit; transition: background 0.15s; }
+  .file-item:hover { background: #f0ecff; border-color: #b8acf5; }
+  .file-icon { font-size: 22px; flex-shrink: 0; }
+  .file-info strong { display: block; font-size: 14px; color: #3a2b8f; }
+  .file-info span { font-size: 11px; color: #aaa; }
+  .guide { background: #f9f9f9; border-radius: 10px; padding: 16px; }
+  .guide h2 { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 10px; }
+  .guide ol { padding-left: 18px; }
+  .guide li { font-size: 12px; color: #666; line-height: 2; }
+  .guide code { background: #eee; padding: 1px 5px; border-radius: 3px; font-size: 11px; font-family: monospace; }
+  .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; border-radius: 4px; font-size: 10px; font-weight: 700; padding: 2px 6px; margin-left: 6px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🤖</div>
+  <h1>QA AI 도우미<span class="badge">무료</span></h1>
+  <p class="sub">ChatGPT를 피그마 안에서 사용하는 플러그인이에요.<br/>아래 파일 3개를 받아서 피그마에 등록하세요.</p>
+
+  <div class="file-list">
+    <a class="file-item" href="manifest.json" download>
+      <span class="file-icon">📄</span>
+      <span class="file-info"><strong>manifest.json</strong><span>플러그인 설정 파일</span></span>
+    </a>
+    <a class="file-item" href="code.js" download>
+      <span class="file-icon">⚙️</span>
+      <span class="file-info"><strong>code.js</strong><span>플러그인 로직 파일</span></span>
+    </a>
+    <a class="file-item" href="ui.html" download>
+      <span class="file-icon">🖼️</span>
+      <span class="file-info"><strong>ui.html</strong><span>플러그인 화면 파일</span></span>
+    </a>
+  </div>
+
+  <div class="guide">
+    <h2>📋 설치 방법</h2>
+    <ol>
+      <li>위 파일 3개를 <strong>같은 폴더</strong>에 저장</li>
+      <li>피그마 열기 → 메뉴 → <code>Plugins</code></li>
+      <li><code>Development</code> → <code>Import plugin from manifest</code></li>
+      <li>저장한 폴더의 <code>manifest.json</code> 선택</li>
+      <li>설치 완료! 플러그인 실행 후 ChatGPT API 키 입력</li>
+    </ol>
+  </div>
+</div>
+</body>
+</html>
